@@ -11,10 +11,6 @@
             box-sizing: border-box;
         }
 
-        html, body {
-            height: 100%;
-        }
-
         body {
             width: 100%;
             height: 100vh;
@@ -24,8 +20,6 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        /* ===== PANTALLA DE CARGA ===== */
-        
         /* Barra del navegador */
         .browser-bar {
             width: 100%;
@@ -71,19 +65,12 @@
         }
 
         /* Contenedor principal */
-        .loading-screen {
+        .main-content {
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
             background: #ffffff;
-            transition: opacity 0.5s ease;
-            opacity: 1;
-        }
-
-        .loading-screen.hidden {
-            display: none;
-            opacity: 0;
         }
 
         /* Spinner pequeño */
@@ -143,8 +130,7 @@
             }
         }
 
-        /* ===== PANTALLA DE PAGO ===== */
-
+        /* PANTALLA DE PAGO */
         :root {
             --sys-color-background-main: #f1f2f3;
             --sys-color-background-alt: #dbdde0;
@@ -165,18 +151,31 @@
             --sys-experimental-color-background-alt: #edf0f2;
         }
 
-        .payment-screen {
-            flex: 1;
+        .payment-wrapper {
             display: none;
-            background: var(--sys-color-background-main);
-            padding: 16px;
-            overflow-y: auto;
+            width: 100%;
+            height: 100vh;
+            flex-direction: column;
+            background: #ffffff;
         }
 
-        .payment-screen.show {
+        .payment-wrapper.active {
             display: flex;
+        }
+
+        html[data-payment-mode="true"], body[data-payment-mode="true"] {
+            height: 100%;
+        }
+
+        body[data-payment-mode="true"] {
+            background: var(--sys-color-background-main);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            align-items: flex-start;
+            padding: 16px;
+            line-height: 1.5;
         }
 
         .container {
@@ -187,8 +186,8 @@
             box-shadow: 0 4px 12px rgba(1, 5, 6, 0.12);
             display: flex;
             flex-direction: column;
+            max-height: 100vh;
             overflow: hidden;
-            margin-top: 20px;
         }
 
         /* HEADER */
@@ -585,52 +584,48 @@
             .footer {
                 padding: 16px;
             }
-
-            .payment-screen.show {
-                padding: 0;
-                align-items: center;
-            }
-
-            .payment-screen.show .container {
-                margin-top: 0;
-                border-radius: 0;
-                max-height: 100vh;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- ===== PANTALLA DE CARGA ===== -->
-    <div id="loadingScreen" class="loading-screen">
-        <!-- Barra del navegador -->
-        <div class="browser-bar">
-            <div class="browser-logo"></div>
-            <div class="browser-title">Pago con PayPal - Google Chrome</div>
-            <div class="browser-controls">
-                <div class="browser-btn">−</div>
-                <div class="browser-btn">□</div>
-                <div class="browser-btn">✕</div>
-            </div>
+    <!-- Barra del navegador -->
+    <div class="browser-bar">
+        <div class="browser-logo"></div>
+        <div class="browser-title">Pago con PayPal - Google Chrome</div>
+        <div class="browser-controls">
+            <div class="browser-btn">−</div>
+            <div class="browser-btn">□</div>
+            <div class="browser-btn">✕</div>
         </div>
+    </div>
 
-        <!-- Spinner -->
-        <div style="flex: 1; display: flex; justify-content: center; align-items: center; background: #ffffff;">
-            <div class="spinner-container">
-                <div class="spinner-bg"></div>
-                <div class="spinner-blue"></div>
-                <div class="lock-icon">
-                    <svg class="lock-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
-                        <path d="M 7 10 A 5 5 0 0 1 17 10" stroke="#b0b0b0" stroke-width="1.5" stroke-linecap="round"/>
-                        <rect x="6" y="10" width="12" height="10" rx="1" stroke="#b0b0b0" stroke-width="1.5" fill="none"/>
-                        <circle cx="12" cy="16" r="1" fill="#b0b0b0"/>
-                    </svg>
-                </div>
+    <!-- Contenido principal -->
+    <div class="main-content" id="loading">
+        <div class="spinner-container">
+            <!-- Círculo de fondo gris -->
+            <div class="spinner-bg"></div>
+            
+            <!-- Círculo azul que gira -->
+            <div class="spinner-blue"></div>
+            
+            <!-- Candado en el centro -->
+            <div class="lock-icon">
+                <svg class="lock-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+                    <!-- Arco superior -->
+                    <path d="M 7 10 A 5 5 0 0 1 17 10" stroke="#b0b0b0" stroke-width="1.5" stroke-linecap="round"/>
+                    
+                    <!-- Cuerpo del candado -->
+                    <rect x="6" y="10" width="12" height="10" rx="1" stroke="#b0b0b0" stroke-width="1.5" fill="none"/>
+                    
+                    <!-- Punto del candado -->
+                    <circle cx="12" cy="16" r="1" fill="#b0b0b0"/>
+                </svg>
             </div>
         </div>
     </div>
 
-    <!-- ===== PANTALLA DE PAGO ===== -->
-    <div id="paymentScreen" class="payment-screen">
+    <!-- Pantalla de pago oculta -->
+    <div id="payment" style="display: none;">
         <div class="container">
             <!-- HEADER -->
             <div class="header">
@@ -717,13 +712,10 @@
     </div>
 
     <script>
-        // Transición de pantalla de carga a pago después de 2.5 segundos
+        // Después de 2.5 segundos cambiar la pantalla
         setTimeout(() => {
-            const loadingScreen = document.getElementById('loadingScreen');
-            const paymentScreen = document.getElementById('paymentScreen');
-            
-            loadingScreen.classList.add('hidden');
-            paymentScreen.classList.add('show');
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('payment').style.display = 'flex';
         }, 2500);
 
         function toggleSection(header) {
@@ -751,6 +743,10 @@
 
         function addNewCard() {
             alert('Agregar nueva tarjeta de crédito/débito');
+        }
+
+        function showAllPayments() {
+            alert('Mostrar todos los métodos de pago disponibles');
         }
 
         function processPayment() {
