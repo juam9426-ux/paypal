@@ -11,6 +11,10 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            height: 100%;
+        }
+
         body {
             width: 100%;
             height: 100vh;
@@ -20,6 +24,8 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
+        /* ===== PANTALLA DE CARGA ===== */
+        
         /* Barra del navegador */
         .browser-bar {
             width: 100%;
@@ -65,12 +71,19 @@
         }
 
         /* Contenedor principal */
-        .main-content {
+        .loading-screen {
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
             background: #ffffff;
+            transition: opacity 0.5s ease;
+            opacity: 1;
+        }
+
+        .loading-screen.hidden {
+            display: none;
+            opacity: 0;
         }
 
         /* Spinner pequeño */
@@ -129,43 +142,634 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* ===== PANTALLA DE PAGO ===== */
+
+        :root {
+            --sys-color-background-main: #f1f2f3;
+            --sys-color-background-alt: #dbdde0;
+            --sys-color-background-surface: #fefefe;
+            --sys-color-background-surface-hover: #f1f2f3;
+            --sys-color-background-surface-active: #dbdde0;
+            --sys-color-primary-main: #0544b5;
+            --sys-color-primary-main-hover: #0070e0;
+            --sys-color-primary-main-active: #003087;
+            --sys-color-primary-contrast: #fff;
+            --sys-color-link-main: #116eca;
+            --sys-color-link-main-hover: #73a5ff;
+            --sys-color-structure-border-high-contrast: #9198a0;
+            --sys-color-structure-border-low-contrast: #cfd3d8;
+            --sys-color-structure-divider: #dbdde0;
+            --sys-color-success-main: #0c6e11;
+            --sys-color-system-main: #001435;
+            --sys-experimental-color-background-alt: #edf0f2;
+        }
+
+        .payment-screen {
+            flex: 1;
+            display: none;
+            background: var(--sys-color-background-main);
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .payment-screen.show {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 552px;
+            background: var(--sys-color-background-surface);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(1, 5, 6, 0.12);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        /* HEADER */
+        .header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+        }
+
+        .logo-icon {
+            display: none;
+        }
+
+        .logo-icon img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #000;
+            letter-spacing: -0.5px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            color: var(--sys-color-structure-border-high-contrast);
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .close-btn:hover {
+            background: var(--sys-color-background-surface-hover);
+        }
+
+        /* CONTENT */
+        .content {
+            padding: 24px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* SECTION: Pagar con */
+        .section {
+            margin-bottom: 0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0 16px 0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #000;
+            text-transform: capitalize;
+            letter-spacing: 0px;
+        }
+
+        .section-chevron {
+            color: #666;
+            font-size: 18px;
+            transition: transform 0.3s;
+            line-height: 1;
+        }
+
+        .section-chevron.open {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .section-content.collapsed {
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        /* PAYMENT METHODS */
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border: 2px solid var(--sys-color-structure-border-low-contrast);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--sys-color-background-surface);
+            position: relative;
+        }
+
+        .payment-method:hover {
+            border-color: var(--sys-color-structure-border-high-contrast);
+            background: var(--sys-color-background-surface-hover);
+        }
+
+        .payment-method.active {
+            border-color: #222;
+            background: var(--sys-color-background-surface);
+        }
+
+        .radio {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--sys-color-structure-border-low-contrast);
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: var(--sys-color-background-surface);
+            transition: all 0.2s;
+        }
+
+        .payment-method:hover .radio {
+            border-color: var(--sys-color-structure-border-high-contrast);
+        }
+
+        .payment-method.active .radio {
+            border-color: #000;
+            background: #000;
+        }
+
+        .radio::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+        }
+
+        .payment-method.active .radio::after {
+            opacity: 1;
+        }
+
+        .payment-icon {
+            width: 48px;
+            height: 32px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .payment-icon img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .payment-info {
+            flex: 1;
+        }
+
+        .payment-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #222;
+            line-height: 1.3;
+        }
+
+        .payment-desc {
+            font-size: 12px;
+            color: var(--sys-color-structure-border-high-contrast);
+            margin-top: 3px;
+        }
+
+        .payment-amount {
+            font-size: 13px;
+            font-weight: 600;
+            color: #222;
+            white-space: nowrap;
+            margin-left: 16px;
+        }
+
+        /* LINK */
+        .show-all-link {
+            color: var(--sys-color-link-main);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 12px 0 0 0;
+            display: block;
+            transition: color 0.2s;
+        }
+
+        .show-all-link:hover {
+            color: var(--sys-color-link-main-hover);
+            text-decoration: underline;
+        }
+
+        /* DIVIDER */
+        .divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 16px 0;
+            border: none;
+        }
+
+        /* ADD CARD */
+        .add-card-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            color: var(--sys-color-link-main);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            margin-top: 8px;
+            transition: color 0.2s;
+        }
+
+        .add-card-btn:hover {
+            color: var(--sys-color-link-main-hover);
+        }
+
+        /* ORDER SUMMARY */
+        .order-summary {
+            background: var(--sys-color-background-alt);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 16px 0 24px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .order-summary:hover {
+            background: #d1d5d9;
+        }
+
+        .order-summary-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .oslo-accordion-icon-circle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .bag-icon {
+            width: 20px;
+            height: 20px;
+            color: #222;
+        }
+
+        .order-amount {
+            font-size: 15px;
+            font-weight: 600;
+            color: #222;
+        }
+
+        .order-summary-chevron {
+            color: #666;
+            font-size: 18px;
+            transition: transform 0.3s;
+            line-height: 1;
+        }
+
+        .order-summary-chevron.open {
+            transform: rotate(180deg);
+        }
+
+        .order-details {
+            background: var(--sys-experimental-color-background-alt);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 0 0 24px 0;
+            border: 1px solid var(--sys-color-structure-divider);
+            display: none;
+        }
+
+        .order-details.show {
+            display: block;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--sys-color-structure-border-high-contrast);
+            margin-bottom: 10px;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+            padding-top: 10px;
+            border-top: 1px solid var(--sys-color-structure-divider);
+            color: #222;
+            font-weight: 600;
+        }
+
+        /* FOOTER */
+        .footer {
+            padding: 20px 24px;
+            border-top: 1px solid #e0e0e0;
+            flex-shrink: 0;
+        }
+
+        .pay-btn {
+            width: 100%;
+            padding: 14px 24px;
+            background: #0544b5;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.3px;
+        }
+
+        .pay-btn:hover:not(:disabled) {
+            background: #0070e0;
+            box-shadow: 0 2px 8px rgba(7, 70, 181, 0.2);
+        }
+
+        .pay-btn:active:not(:disabled) {
+            background: #003087;
+            transform: scale(0.99);
+        }
+
+        .pay-btn:disabled {
+            background: var(--sys-color-background-alt);
+            color: var(--sys-color-structure-border-high-contrast);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                border-radius: 0;
+            }
+
+            .content {
+                padding: 16px;
+            }
+
+            .header {
+                padding: 16px;
+            }
+
+            .footer {
+                padding: 16px;
+            }
+
+            .payment-screen.show {
+                padding: 0;
+                align-items: center;
+            }
+
+            .payment-screen.show .container {
+                margin-top: 0;
+                border-radius: 0;
+                max-height: 100vh;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Barra del navegador -->
-    <div class="browser-bar">
-        <div class="browser-logo"></div>
-        <div class="browser-title">Pago con PayPal - Google Chrome</div>
-        <div class="browser-controls">
-            <div class="browser-btn">−</div>
-            <div class="browser-btn">□</div>
-            <div class="browser-btn">✕</div>
+    <!-- ===== PANTALLA DE CARGA ===== -->
+    <div id="loadingScreen" class="loading-screen">
+        <!-- Barra del navegador -->
+        <div class="browser-bar">
+            <div class="browser-logo"></div>
+            <div class="browser-title">Pago con PayPal - Google Chrome</div>
+            <div class="browser-controls">
+                <div class="browser-btn">−</div>
+                <div class="browser-btn">□</div>
+                <div class="browser-btn">✕</div>
+            </div>
+        </div>
+
+        <!-- Spinner -->
+        <div style="flex: 1; display: flex; justify-content: center; align-items: center; background: #ffffff;">
+            <div class="spinner-container">
+                <div class="spinner-bg"></div>
+                <div class="spinner-blue"></div>
+                <div class="lock-icon">
+                    <svg class="lock-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+                        <path d="M 7 10 A 5 5 0 0 1 17 10" stroke="#b0b0b0" stroke-width="1.5" stroke-linecap="round"/>
+                        <rect x="6" y="10" width="12" height="10" rx="1" stroke="#b0b0b0" stroke-width="1.5" fill="none"/>
+                        <circle cx="12" cy="16" r="1" fill="#b0b0b0"/>
+                    </svg>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Contenido principal -->
-    <div class="main-content">
-    <div class="spinner-container">
-        <!-- Círculo de fondo gris -->
-        <div class="spinner-bg"></div>
-        
-        <!-- Círculo azul que gira -->
-        <div class="spinner-blue"></div>
-        
-        <!-- Candado en el centro -->
-        <div class="lock-icon">
-            <svg class="lock-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
-                <!-- Arco superior -->
-                <path d="M 7 10 A 5 5 0 0 1 17 10" stroke="#b0b0b0" stroke-width="1.5" stroke-linecap="round"/>
-                
-                <!-- Cuerpo del candado -->
-                <rect x="6" y="10" width="12" height="10" rx="1" stroke="#b0b0b0" stroke-width="1.5" fill="none"/>
-                
-                <!-- Punto del candado -->
-                <circle cx="12" cy="16" r="1" fill="#b0b0b0"/>
-            </svg>
+    <!-- ===== PANTALLA DE PAGO ===== -->
+    <div id="paymentScreen" class="payment-screen">
+        <div class="container">
+            <!-- HEADER -->
+            <div class="header">
+                <div class="header-left">
+                    <div class="logo-icon">
+                        <img src="https://www.paypal.com/pay/_next/static/media/paypal-rebrand.3fo58hxqd2-k_.svg?dpl=0-579-1_20261008085749764" alt="PayPal">
+                    </div>
+                    <div class="logo-text">PayPal</div>
+                </div>
+                <button class="close-btn" onclick="closeModal()">✕</button>
+            </div>
+
+            <!-- CONTENT -->
+            <div class="content">
+                <!-- SECTION: Métodos de pago -->
+                <div class="section">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <span class="section-title">Métodos de pago</span>
+                        <span class="section-chevron">⌃</span>
+                    </div>
+                    <div class="section-content">
+                        <!-- PayPal Balance -->
+                        <div class="payment-method active" onclick="selectPayment(this)">
+                        <div class="radio"></div>
+                        <div class="payment-icon">
+                            <img src="https://www.paypal.com/pay/_next/static/media/paypal-balance-icon.2b6aoe3rlv2nw.svg?dpl=0-579-1_20261008085749764" alt="PayPal Balance">
+                        </div>
+                        <div class="payment-info">
+                            <div class="payment-name">Saldo de PayPal</div>
+                            <div class="payment-desc">$1.787,29 disponibles</div>
+                        </div>
+                        <div class="payment-amount">$0,99</div>
+                        </div>
+
+                        <button class="add-card-btn" onclick="addNewCard()">
+                            <span style="font-size: 18px; font-weight: bold;">+</span> Agregar tarjeta
+                        </button>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- ORDER SUMMARY -->
+                <div class="order-summary" onclick="toggleOrderSummary(this)">
+                    <div class="order-summary-left">
+                        <span class="oslo-accordion-icon-circle">
+                            <svg class="bag-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                        </span>
+                        <span class="order-amount">$0,99</span>
+                    </div>
+                    <span class="order-summary-chevron">∨</span>
+                </div>
+
+                <!-- ORDER DETAILS -->
+                <div class="order-details" id="orderDetails">
+                    <div class="detail-row">
+                        <span>Subtotal</span>
+                        <span>$0,99</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Envío</span>
+                        <span>$0,00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Impuestos</span>
+                        <span>$0,00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Total</span>
+                        <span>$0,99</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="footer">
+                <button class="pay-btn" onclick="processPayment()">Pagar</button>
+            </div>
         </div>
     </div>
-    </div>
+
+    <script>
+        // Transición de pantalla de carga a pago después de 2.5 segundos
+        setTimeout(() => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const paymentScreen = document.getElementById('paymentScreen');
+            
+            loadingScreen.classList.add('hidden');
+            paymentScreen.classList.add('show');
+        }, 2500);
+
+        function toggleSection(header) {
+            const content = header.nextElementSibling;
+            const chevron = header.querySelector('.section-chevron');
+            
+            content.classList.toggle('collapsed');
+            chevron.classList.toggle('open');
+        }
+
+        function selectPayment(element) {
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+
+        function toggleOrderSummary(element) {
+            const details = document.getElementById('orderDetails');
+            const chevron = element.querySelector('.order-summary-chevron');
+            
+            details.classList.toggle('show');
+            chevron.classList.toggle('open');
+        }
+
+        function addNewCard() {
+            alert('Agregar nueva tarjeta de crédito/débito');
+        }
+
+        function processPayment() {
+            const button = document.querySelector('.pay-btn');
+            button.disabled = true;
+            button.textContent = 'Procesando...';
+
+            setTimeout(() => {
+                alert('✓ Pago de $0,99 completado exitosamente');
+                button.disabled = false;
+                button.textContent = 'Pagar';
+            }, 2000);
+        }
+
+        function closeModal() {
+            if (confirm('¿Deseas cerrar esta sesión de pago?')) {
+                alert('Sesión cerrada');
+            }
+        }
+    </script>
 </body>
 </html>
