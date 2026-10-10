@@ -15,10 +15,62 @@
             width: 100%;
             height: 100vh;
             display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* Barra del navegador */
+        .browser-bar {
+            width: 100%;
+            height: 56px;
+            background: #343434;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 12px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .browser-logo {
+            width: 24px;
+            height: 24px;
+            background-image: url('https://brandlogos.net/wp-content/uploads/2021/11/paypal-logo-512x512.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .browser-title {
+            font-size: 13px;
+            color: #e0e0e0;
+            flex: 1;
+        }
+
+        .browser-controls {
+            display: flex;
+            gap: 16px;
+            margin-left: auto;
+        }
+
+        .browser-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9e9e9e;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* Contenedor principal */
+        .main-content {
+            flex: 1;
+            display: flex;
             justify-content: center;
             align-items: center;
             background: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         /* Spinner pequeño */
@@ -80,6 +132,19 @@
     </style>
 </head>
 <body>
+    <!-- Barra del navegador -->
+    <div class="browser-bar">
+        <div class="browser-logo"></div>
+        <div class="browser-title">Pago con PayPal - Google Chrome</div>
+        <div class="browser-controls">
+            <div class="browser-btn">−</div>
+            <div class="browser-btn">□</div>
+            <div class="browser-btn">✕</div>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="main-content">
     <div class="spinner-container">
         <!-- Círculo de fondo gris -->
         <div class="spinner-bg"></div>
@@ -100,6 +165,7 @@
                 <circle cx="12" cy="16" r="1" fill="#b0b0b0"/>
             </svg>
         </div>
+    </div>
     </div>
 </body>
 </html>
